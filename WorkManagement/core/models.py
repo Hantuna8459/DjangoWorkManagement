@@ -9,9 +9,6 @@ class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=10)
     user_image = models.ImageField(upload_to='profile_images', default='blank-profile-picture.png')
     
-    # def __str__(self):
-    #     return self.username
-
 class Workspace(models.Model):
     workspace_id = models.BigAutoField(primary_key=True, null=False)
     workspace_label = models.CharField(max_length=100)
