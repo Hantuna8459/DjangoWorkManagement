@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 import os
+from dotenv import load_dotenv
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -19,13 +20,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
+# Load environment variables from .env file
+load_dotenv()
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("APP_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get("DEBUG", default=1))
 
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOW_HOSTS").split("")
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOW_HOSTS","").split(',')
 
 
 # Application definition
@@ -38,8 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core.apps.CoreConfig',
-    'crispy_forms',
-    'crispy_bootsrap5',
+    "crispy_forms",
+    "crispy_bootstrap5",
 ]
 
 MIDDLEWARE = [
@@ -78,12 +82,12 @@ WSGI_APPLICATION = 'WorkManagement.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.environ.get("DB_ENGINE"),
-        'NAME':os.environ.get("DB_NAME"),
-        'USER':os.environ.get("DB_USER"),
-        'PASSWORD':os.environ.get("DB_PASSWORD"),
-        'PORT':os.environ.get("DB_PORT"),
-        'HOST':os.environ.get("DB_HOST"),
+        "ENGINE": os.environ.get("DB_ENGINE"),
+        "NAME":os.environ.get("DB_NAME"),
+        "USER":os.environ.get("DB_USER"),
+        "PASSWORD":os.environ.get("DB_PASSWORD"),
+        "PORT":os.environ.get("DB_PORT"),
+        "HOST":os.environ.get("DB_HOST"),
     }
 }
 
@@ -144,5 +148,7 @@ DATETIME_INPUT_FORMATS = [
 
 # Crispy packs
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
-
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+# Add CustomUser model
+AUTH_USER_MODEL = 'core.CustomUser'
