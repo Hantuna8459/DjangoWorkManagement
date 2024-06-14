@@ -45,13 +45,17 @@ def register_view(request):
     context = {'form':form}
     return render (request, template_name, context)
 
+def email_verify_view(request):
+    return render()
+
 def password_reset_view(request):
     template_name = 'auth/password_reset.html'
-    return render(request)
+    return render(request, template_name)
 
 @login_required(login_url='login')
-def workspace_view():
-    return render ()
+def workspace_view(request):
+    template_name = 'workspace/workspace.html'
+    return render (request, template_name)
 
 @login_required(login_url='login')
 def task_view():
