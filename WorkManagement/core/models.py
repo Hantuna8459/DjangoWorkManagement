@@ -9,10 +9,16 @@ class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=10)
     user_image = models.ImageField(upload_to='profile_images', default='blank-profile-picture.png')
     
+    class Meta:
+        db_table = 'user'
+    
 class Workspace(models.Model):
     workspace_id = models.BigAutoField(primary_key=True, null=False)
     workspace_label = models.CharField(max_length=100)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    
+    class Meta:
+        db_table = 'workspace'
     
     def __str__(self):
         return self.workspace_label
@@ -24,6 +30,9 @@ class Task(models.Model):
     task_description = models.CharField(max_length=255)
     task_image = models.ImageField(upload_to='task_images', default=None)
     workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE)
+    
+    class Meta:
+        db_table = 'task'
     
     def __str__(self):
         return self.task_label
