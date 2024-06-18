@@ -24,7 +24,7 @@ class CustomRegisterForm(UserCreationForm):
         label='', 
         widget=forms.TextInput(attrs={
             'class':'form-control', 
-            'placeholder':'Enter your Email Address'
+            'placeholder':'Enter your Email Address',
             }
         )
     )    
@@ -63,3 +63,19 @@ class CustomRegisterForm(UserCreationForm):
             '<p>Enter the same password as before</p>'
             '</span>'	
         )
+        
+class EmailForm(forms.Form):
+    email = forms.EmailField(
+        label='', 
+        widget=forms.TextInput(attrs={
+            'class':'form-control', 
+            'placeholder':'Enter your Email Address',
+            'help_text':'doesnot matter',
+            }
+        )
+    )
+        
+class OTPForm(forms.Form):
+    otp_entered = forms.CharField(
+        label='enter OTP',
+    )

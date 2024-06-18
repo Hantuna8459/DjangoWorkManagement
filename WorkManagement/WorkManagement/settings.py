@@ -152,3 +152,18 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # Add CustomUser model
 AUTH_USER_MODEL = 'core.CustomUser'
+
+# Send Email Setup
+def email_verified_callback(user):
+    user.is_active = True
+
+
+def password_change_callback(user, password):
+    user.set_password(password)
+
+EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND")
+EMAIL_HOST = os.environ.get("MAIL_HOST")
+EMAIL_PORT = os.environ.get("MAIL_PORT")
+EMAIL_HOST_USER = os.environ.get("MAIL_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("MAIL_PASSWORD")
+EMAIL_USE_TLS = True
