@@ -11,5 +11,5 @@ urlpatterns = [
     path('workspace/', views.workspace_view, name='workspace'),
     path('logout/',auth_views.LogoutView.as_view(next_page='/'),name='logout'),
     path('send_email', views.send_email_test, name='send_email'),
-    path('otp_verify', views.otp_verification_test, name='otp_verify')
+    path('send_email/otp_verify', views.otp_verification_test, name='otp_verify')
 ]

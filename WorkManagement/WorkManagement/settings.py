@@ -167,3 +167,9 @@ EMAIL_PORT = os.environ.get("MAIL_PORT")
 EMAIL_HOST_USER = os.environ.get("MAIL_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("MAIL_PASSWORD")
 EMAIL_USE_TLS = True
+
+# Use database-backed sessions
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
