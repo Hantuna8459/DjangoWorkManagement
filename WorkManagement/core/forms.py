@@ -64,6 +64,17 @@ class CustomRegisterForm(UserCreationForm):
             '</span>'	
         )
         
+class EmailVerifyForm(forms.Form):
+    otp_entered = forms.CharField(
+        label='',
+        widget=forms.TextInput(attrs={
+            'class':'form-control', 
+            'placeholder':'Enter OTP here',
+            })
+    )
+        
+        
+# experiments forms
 class EmailForm(forms.Form):
     email = forms.EmailField(
         label='', 

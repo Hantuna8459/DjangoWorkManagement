@@ -4,17 +4,23 @@ from django.contrib.auth.decorators import login_required
 from .forms import(
     CustomRegisterForm, 
     CustomLoginForm,
+    EmailVerifyForm,
+    # Experiment
     EmailForm,
     OTPForm,
 )
 from django.contrib import messages
 from django.core.mail import send_mail
-from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils.encoding import force_bytes, force_str
 from django.template.loader import render_to_string
 from django.conf import settings
+from .models import (
+    Workspace,
+    CustomUser,
+    Task,
+)
 import pyotp
 import time
 
@@ -23,11 +29,11 @@ import time
 # create OTP
 def generate_otp():
     base32_secret = pyotp.random_base32()
-    totp = pyotp.TOTP(base32_secret, interval=180)
+    totp = pyotp.TOTP(base32_secret, interval=300)
     otp = totp.now()
     return otp, base32_secret
 
-def login_view(request):
+def login(request):
     form = CustomLoginForm()
     if request.method == 'POST':
         form = CustomLoginForm(data = request.POST)
@@ -35,7 +41,7 @@ def login_view(request):
         password = request.POST.get('password')       
         user = authenticate(request, username=username_or_email, password=password)
         login_save = request.POST.get('login_save')# manual set cookie expire age
-        if user is not None:
+        if user is not None and user.is_active == True:
             login(request, user)
             if login_save:
                 request.session.set.expiry(1000000)
@@ -46,7 +52,7 @@ def login_view(request):
     context = {'form':form}
     return render(request, template_name, context)
 
-def register_view(request):
+def register(request):
     form = CustomRegisterForm()
     if request.method == 'POST':
         form = CustomRegisterForm(request.POST)
@@ -54,15 +60,69 @@ def register_view(request):
             user = form.save(commit=False)
             user.is_active = False
             user.save()
-            return redirect ('')
+            # send OTP
+            otp, base32_secret = generate_otp()
+            
+            # store the secret and timestamp in the session
+            request.session['base32_secret'] = base32_secret
+            request.session['otp_timestamp'] = int(time.time())
+            
+            # send email
+            subject = "hello buddy"
+            message = render_to_string('experiments/email_template_test.html', {
+                'otp': otp,
+                'user':user,
+                })
+            recipient_email = form.cleaned_data['email']
+            send_mail(subject,
+                      message,
+                      from_email=('noreply@arrowhitech.com'),
+                      recipient_list = [recipient_email],
+                      fail_silently=False,
+                      )
+            return redirect('email_verification')
+        else:
+            messages.error(request, 'Email send failed!')
     else:
         form = CustomRegisterForm()
     template_name = 'auth/register.html'
     context = {'form':form}
     return render (request, template_name, context)
 
-def email_verify_view(request):
-    return render()
+def email_verify(request, user):
+        form = EmailVerifyForm()
+        if request.method == 'POST':
+            otp_entered = request.POST.get('otp_entered')
+            base32_secret = request.session.get('base32_secret')
+            otp_timestamp = request.session.get('otp_timestamp')
+            current_time = int(time.time())
+        
+            # Calculate OTP validity period
+            if base32_secret and otp_timestamp is not None:
+                otp_validity_period = 300
+            
+                # Check if the OTP has expired
+                if current_time - otp_timestamp > otp_validity_period:
+                    messages.error(request, 'OTP has expired. Please request a new one.')
+                    return redirect('register')
+    
+            # Verify the OTP using TOTP object
+            totp = pyotp.TOTP(base32_secret, interval=otp_validity_period)
+            if user is not None and totp.verify(user, otp_entered):
+                messages.success(request, 'OTP verified successfully.')
+                user.is_active = True
+                # Clear OTP-related data from session after successful verification
+                del request.session['base32_secret']
+                del request.session['otp_timestamp']
+                return redirect('register_complete')
+            else:
+                messages.error(request, 'Invalid OTP. Please try again.')
+        else:
+            messages.error(request, 'OTP verification failed. No OTP or timestamp found in session.')
+        
+        template_name = 'auth/email_verification.html'
+        context = {'form':form, 'user':user}
+        return render (request, template_name, context)
 
 # use this for email test
 def send_email_test(request):
@@ -130,11 +190,27 @@ def otp_verification_test(request):
     context = {'form':form}
     return render (request, template_name, context)
 
-def password_reset_view(request):
+def password_reset(request):
     template_name = 'auth/password_reset.html'
     return render(request, template_name)
 
 @login_required(login_url='login')
-def workspace_view(request):
+def profile(request):
+    users = CustomUser.objects.all()
+    template_name = 'profile/profile.html'
+    context = {'users':users}
+    return render(request, template_name, context)
+
+@login_required(login_url='login')
+def workspace(request):
+    workspaces = Workspace.objects.all()
     template_name = 'workspace/workspace.html'
-    return render (request, template_name)
+    context = {'workspaces':workspaces}
+    return render (request, template_name, context)
+
+@login_required(login_url='login')
+def task(request):
+    tasks = Task.objects.all()
+    template_name = 'workspace/'
+    context = {'tasks':tasks}
+    return render (request, template_name, context)
