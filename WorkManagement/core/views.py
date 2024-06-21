@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from .forms import(
     CustomRegisterForm, 
@@ -11,9 +11,6 @@ from .forms import(
 )
 from django.contrib import messages
 from django.core.mail import send_mail
-from django.contrib.sites.shortcuts import get_current_site
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from django.utils.encoding import force_bytes, force_str
 from django.template.loader import render_to_string
 from django.conf import settings
 from .models import (
@@ -33,21 +30,24 @@ def generate_otp():
     otp = totp.now()
     return otp, base32_secret
 
-def login(request):
+def login_view(request):
     form = CustomLoginForm()
     if request.method == 'POST':
-        form = CustomLoginForm(data = request.POST)
-        username_or_email = request.POST.get('username') or request.POST.get('email')
-        password = request.POST.get('password')       
-        user = authenticate(request, username=username_or_email, password=password)
-        login_save = request.POST.get('login_save')# manual set cookie expire age
-        if user is not None and user.is_active == True:
-            login(request, user)
-            if login_save:
-                request.session.set.expiry(1000000)
-            else:
-                request.session.set.expiry(0)
-            return redirect('workspace')
+        form = CustomLoginForm(request, request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username'] or form.cleaned_data['email']
+            password = form.cleaned_data['password']     
+            user = authenticate(request, username=username, password=password)
+            login_save = request.POST.get('login_save')# manual set cookie expire age
+            if user is not None:
+                if user.is_active == True:
+                    login(request, user)
+                    if login_save:
+                        request.session.set_expiry(1000000)
+                        return redirect('workspace')
+                    else:
+                        request.session.set_expiry(0)
+                    return redirect('workspace')
     template_name = 'auth/login.html'
     context = {'form':form}
     return render(request, template_name, context)
@@ -66,10 +66,13 @@ def register(request):
             # store the secret and timestamp in the session
             request.session['base32_secret'] = base32_secret
             request.session['otp_timestamp'] = int(time.time())
+            request.session['username'] = form.cleaned_data['username']
+            request.session['email'] = form.cleaned_data['email']
+            request.session['password'] = form.cleaned_data['password1']
             
             # send email
-            subject = "hello buddy"
-            message = render_to_string('experiments/email_template_test.html', {
+            subject = "noreply"
+            message = render_to_string('auth/email_template.html', {
                 'otp': otp,
                 'user':user,
                 })
@@ -89,8 +92,9 @@ def register(request):
     context = {'form':form}
     return render (request, template_name, context)
 
-def email_verify(request, user):
+def email_verify(request):
         form = EmailVerifyForm()
+        user = request.user
         if request.method == 'POST':
             otp_entered = request.POST.get('otp_entered')
             base32_secret = request.session.get('base32_secret')
@@ -106,19 +110,29 @@ def email_verify(request, user):
                     messages.error(request, 'OTP has expired. Please request a new one.')
                     return redirect('register')
     
-            # Verify the OTP using TOTP object
-            totp = pyotp.TOTP(base32_secret, interval=otp_validity_period)
-            if user is not None and totp.verify(user, otp_entered):
-                messages.success(request, 'OTP verified successfully.')
-                user.is_active = True
-                # Clear OTP-related data from session after successful verification
-                del request.session['base32_secret']
-                del request.session['otp_timestamp']
-                return redirect('register_complete')
+                # Verify the OTP using TOTP object
+                totp = pyotp.TOTP(base32_secret, interval=otp_validity_period)
+                if totp.verify(otp_entered):
+                    messages.success(request, 'OTP verified successfully.')
+                    username = request.session.get('username')
+                    email = request.session.get('email')
+                    password = request.session.get('password')
+                    user = CustomUser.objects.get(username=username)
+                    user.email = email
+                    user.set_password(password)
+                    user.is_active = True
+                    user.save()
+                    # Clear OTP-related data from session after successful verification
+                    del request.session['base32_secret']
+                    del request.session['otp_timestamp']
+                    del request.session['username']
+                    del request.session['email']
+                    del request.session['password']
+                    return redirect('register_complete')
+                else:
+                    messages.error(request, 'Invalid OTP. Please try again.')
             else:
-                messages.error(request, 'Invalid OTP. Please try again.')
-        else:
-            messages.error(request, 'OTP verification failed. No OTP or timestamp found in session.')
+                messages.error(request, 'OTP verification failed. No OTP found in session.')
         
         template_name = 'auth/email_verification.html'
         context = {'form':form, 'user':user}
@@ -195,10 +209,10 @@ def password_reset(request):
     return render(request, template_name)
 
 @login_required(login_url='login')
-def profile(request):
-    users = CustomUser.objects.all()
+def profile(request, pk):
+    user = get_object_or_404(CustomUser, user_id=pk)
     template_name = 'profile/profile.html'
-    context = {'users':users}
+    context = {'user':user}
     return render(request, template_name, context)
 
 @login_required(login_url='login')
@@ -214,3 +228,8 @@ def task(request):
     template_name = 'workspace/'
     context = {'tasks':tasks}
     return render (request, template_name, context)
+
+@login_required(login_url='login')
+def logout_view(request):
+    logout(request)
+    return redirect('login')

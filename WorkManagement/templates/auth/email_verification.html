@@ -4,12 +4,13 @@
 
 {% block style %}
 {% endblock %}
+
+{% block content %}
 <ul class="messages">
     {% for message in messages %}
     <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
     {% endfor %}
 </ul>
-{% block content %}
 <form method="post">
     {% csrf_token %}
     <p>We have send you an OTP</p>
