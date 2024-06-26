@@ -5,6 +5,7 @@ from .forms import(
     CustomRegisterForm, 
     CustomLoginForm,
     EmailVerifyForm,
+    WorkspaceCreateForm,
     # Experiment
     EmailForm,
     OTPForm,
@@ -20,6 +21,7 @@ from .models import (
 )
 import pyotp
 import time
+from django.views.decorators.http import require_http_methods
 
 # Create your views here.
 
@@ -31,7 +33,6 @@ def generate_otp():
     return otp, base32_secret
 
 def login_view(request):
-    form = CustomLoginForm() 
     if request.method == 'POST':
         form = CustomLoginForm(data = request.POST)
         if form.is_valid():
@@ -44,16 +45,17 @@ def login_view(request):
                     login(request, user)
                     if login_save:
                         request.session.set_expiry(1000000)
-                        return redirect('workspace')
+                        return redirect('workspace_list')
                     else:
                         request.session.set_expiry(0)
-                    return redirect('workspace') 
+                    return redirect('workspace_list')
+    else:
+        form = CustomLoginForm() 
     template_name = 'auth/login.html'
     context = {'form':form}
     return render(request, template_name, context)
 
 def register(request):
-    form = CustomRegisterForm()
     if request.method == 'POST':
         form = CustomRegisterForm(request.POST)
         if form.is_valid():
@@ -93,54 +95,53 @@ def register(request):
     return render (request, template_name, context)
 
 def email_verify(request):
-        form = EmailVerifyForm()
-        user = request.user
-        if request.method == 'POST':
-            otp_entered = request.POST.get('otp_entered')
-            base32_secret = request.session.get('base32_secret')
-            otp_timestamp = request.session.get('otp_timestamp')
-            current_time = int(time.time())
-        
-            # Calculate OTP validity period
-            if base32_secret and otp_timestamp is not None:
-                otp_validity_period = 300
-            
-                # Check if the OTP has expired
-                if current_time - otp_timestamp > otp_validity_period:
-                    messages.error(request, 'OTP has expired. Please request a new one.')
-                    return redirect('register')
+    user = request.user
+    if request.method == 'POST':
+        otp_entered = request.POST.get('otp_entered')
+        base32_secret = request.session.get('base32_secret')
+        otp_timestamp = request.session.get('otp_timestamp')
+        current_time = int(time.time())
     
-                # Verify the OTP using TOTP object
-                totp = pyotp.TOTP(base32_secret, interval=otp_validity_period)
-                if totp.verify(otp_entered):
-                    messages.success(request, 'OTP verified successfully.')
-                    username = request.session.get('username')
-                    email = request.session.get('email')
-                    password = request.session.get('password')
-                    user = CustomUser.objects.get(username=username)
-                    user.email = email
-                    user.set_password(password)
-                    user.is_active = True
-                    user.save()
-                    # Clear OTP-related data from session after successful verification
-                    del request.session['base32_secret']
-                    del request.session['otp_timestamp']
-                    del request.session['username']
-                    del request.session['email']
-                    del request.session['password']
-                    return redirect('register_complete')
-                else:
-                    messages.error(request, 'Invalid OTP. Please try again.')
-            else:
-                messages.error(request, 'OTP verification failed. No OTP found in session.')
+        # Calculate OTP validity period
+        if base32_secret and otp_timestamp is not None:
+            otp_validity_period = 300
         
+            # Check if the OTP has expired
+            if current_time - otp_timestamp > otp_validity_period:
+                messages.error(request, 'OTP has expired. Please request a new one.')
+                return redirect('register')
+
+            # Verify the OTP using TOTP object
+            totp = pyotp.TOTP(base32_secret, interval=otp_validity_period)
+            if totp.verify(otp_entered):
+                messages.success(request, 'OTP verified successfully.')
+                username = request.session.get('username')
+                email = request.session.get('email')
+                password = request.session.get('password')
+                user = CustomUser.objects.get(username=username)
+                user.email = email
+                user.set_password(password)
+                user.is_active = True
+                user.save()
+                # Clear OTP-related data from session after successful verification
+                del request.session['base32_secret']
+                del request.session['otp_timestamp']
+                del request.session['username']
+                del request.session['email']
+                del request.session['password']
+                return redirect('register_complete')
+            else:
+                messages.error(request, 'Invalid OTP. Please try again.')
+        else:
+            messages.error(request, 'OTP verification failed. No OTP found in session.')
+    else:
+        form = EmailVerifyForm()
         template_name = 'auth/email_verification.html'
         context = {'form':form, 'user':user}
         return render (request, template_name, context)
 
 # use this for email test
 def send_email_test(request):
-    form = EmailForm()
     if request.method == 'POST':
         form = EmailForm(data=request.POST)
         if form.is_valid():
@@ -165,13 +166,14 @@ def send_email_test(request):
             return redirect('otp_verify')
         else:
             messages.error(request, 'Email send failed!')
+    else:
+        form = EmailForm()
     context = {'form':form}
     template_name = 'experiments/send_email_test.html'
     return render(request, template_name, context)
 
 # test otp verify
 def otp_verification_test(request):
-    form = OTPForm()
     if request.method == 'POST':
         otp_entered = request.POST.get('otp_entered')
         base32_secret = request.session.get('base32_secret')
@@ -200,6 +202,8 @@ def otp_verification_test(request):
         else:
             messages.error(request, 'OTP verification failed. No OTP or timestamp found in session.')
             return redirect('send_email')
+    else:
+        form = OTPForm()
     template_name = 'experiments/otp_verification_test.html'
     context = {'form':form}
     return render (request, template_name, context)
@@ -216,14 +220,35 @@ def profile(request, pk):
     return render(request, template_name, context)
 
 # @login_required(login_url='login')
-def workspace(request):
+def workspace_list(request):
     workspaces = Workspace.objects.all()
-    template_name = 'workspace/workspace.html'
+    template_name = 'workspace/workspace_list.html'
     context = {'workspaces':workspaces}
     return render (request, template_name, context)
 
+def workspace_create(request):
+    if request.method == "POST":
+        form = WorkspaceCreateForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect ('workspace_list')
+    else:
+        form = WorkspaceCreateForm()
+    template_name = 'workspace/workspace_create.html'
+    context = {'form':form}
+    return render (request, template_name, context)
+
+def workspace_delete(request, pk):
+    workspaces = get_object_or_404(Workspace, workspace_id=pk)
+    if request.method == "POST":
+        workspaces.delete()
+        return redirect ('workspace_list')
+    template_name = 'workspace/workspace_delete.html'
+    context = {'workspaces':workspaces}
+    return render(request, template_name, context)
+
 @login_required(login_url='login')
-def task(request):
+def task_list(request):
     tasks = Task.objects.all()
     template_name = 'workspace/'
     context = {'tasks':tasks}
