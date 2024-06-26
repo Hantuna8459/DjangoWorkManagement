@@ -31,11 +31,11 @@ def generate_otp():
     return otp, base32_secret
 
 def login_view(request):
-    form = CustomLoginForm()
+    form = CustomLoginForm() 
     if request.method == 'POST':
-        form = CustomLoginForm(request, request.POST)
+        form = CustomLoginForm(data = request.POST)
         if form.is_valid():
-            username = form.cleaned_data['username'] or form.cleaned_data['email']
+            username = form.cleaned_data['username']
             password = form.cleaned_data['password']     
             user = authenticate(request, username=username, password=password)
             login_save = request.POST.get('login_save')# manual set cookie expire age
@@ -47,7 +47,7 @@ def login_view(request):
                         return redirect('workspace')
                     else:
                         request.session.set_expiry(0)
-                    return redirect('workspace')
+                    return redirect('workspace') 
     template_name = 'auth/login.html'
     context = {'form':form}
     return render(request, template_name, context)
@@ -63,7 +63,7 @@ def register(request):
             # send OTP
             otp, base32_secret = generate_otp()
             
-            # store the secret and timestamp in the session
+            # store the data in the session
             request.session['base32_secret'] = base32_secret
             request.session['otp_timestamp'] = int(time.time())
             request.session['username'] = form.cleaned_data['username']
@@ -79,7 +79,7 @@ def register(request):
             recipient_email = form.cleaned_data['email']
             send_mail(subject,
                       message,
-                      from_email=('noreply@arrowhitech.com'),
+                      from_email=('noreply@mail.com'),
                       recipient_list = [recipient_email],
                       fail_silently=False,
                       )
@@ -215,7 +215,7 @@ def profile(request, pk):
     context = {'user':user}
     return render(request, template_name, context)
 
-@login_required(login_url='login')
+# @login_required(login_url='login')
 def workspace(request):
     workspaces = Workspace.objects.all()
     template_name = 'workspace/workspace.html'

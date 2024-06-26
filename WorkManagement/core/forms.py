@@ -4,6 +4,15 @@ from .models import CustomUser
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 class CustomLoginForm(AuthenticationForm):
+    # email_or_username = forms.CharField(
+    #     label='', 
+    #     widget=forms.CharField(attrs={
+    #         'class':'form-control', 
+    #         'placeholder':'Enter Email or Username',
+    #         }
+    #     )
+    # )    
+
     def __init__(self, *args, **kwargs):
         super(CustomLoginForm, self).__init__(*args, **kwargs)
         
