@@ -21,7 +21,7 @@ from .models import (
 )
 import pyotp
 import time
-from django.views.decorators.http import require_http_methods
+from django.http import HttpResponse, JsonResponse
 
 # Create your views here.
 
@@ -230,13 +230,16 @@ def workspace_create(request):
     if request.method == "POST":
         form = WorkspaceCreateForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect ('workspace_list')
+            workspace = form.save(commit=False)
+            workspace.user = request.user
+            workspace.save()
+            # return JsonResponse(workspace)
+        # 
     else:
         form = WorkspaceCreateForm()
     template_name = 'workspace/workspace_create.html'
     context = {'form':form}
-    return render (request, template_name, context)
+    return render(request, template_name, context)
 
 def workspace_delete(request, pk):
     workspaces = get_object_or_404(Workspace, workspace_id=pk)
@@ -250,7 +253,7 @@ def workspace_delete(request, pk):
 @login_required(login_url='login')
 def task_list(request):
     tasks = Task.objects.all()
-    template_name = 'workspace/'
+    template_name = 'workspace/task_list.html'
     context = {'tasks':tasks}
     return render (request, template_name, context)
 

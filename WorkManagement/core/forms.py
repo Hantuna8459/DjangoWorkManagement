@@ -1,17 +1,10 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from .models import CustomUser
+from .models import CustomUser, Workspace
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 class CustomLoginForm(AuthenticationForm):
-    # email_or_username = forms.CharField(
-    #     label='', 
-    #     widget=forms.CharField(attrs={
-    #         'class':'form-control', 
-    #         'placeholder':'Enter Email or Username',
-    #         }
-    #     )
-    # )    
+    
 
     def __init__(self, *args, **kwargs):
         super(CustomLoginForm, self).__init__(*args, **kwargs)
@@ -81,6 +74,19 @@ class EmailVerifyForm(forms.Form):
             'placeholder':'Enter OTP here',
             })
     )
+    
+class WorkspaceCreateForm(forms.ModelForm):
+    workspace_label = forms.CharField(
+        label='',
+        widget=forms.TextInput(attrs={
+            'class':'form-control', 
+            'placeholder':'Enter workspace title here',
+            })
+    )
+    
+    class Meta:
+        model = Workspace
+        fields = ['workspace_label']
         
         
 # experiments forms

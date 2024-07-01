@@ -10,7 +10,7 @@
         {% csrf_token %}
         {{form|crispy}}
         <button type="submit" class="btn btn-success">Save</button>
-        <a href="{% url 'workspace' %}" class="btn btn-secondary">Cancel</a>
+        <a href="{% url 'workspace_list' %}" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
 {% endblock  %}

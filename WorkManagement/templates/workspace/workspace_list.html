@@ -7,7 +7,7 @@
 
 {% block header %}
 <header class="p-3 bg-dark text-white">
-  <div class="container">
+  <div class="container-fluid">
     <div class="d-flex flex-wrap align-items-center justify-content-between">
       <a href="{% url 'workspace_list' %}" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
         Work Management
@@ -44,7 +44,52 @@
 {% endblock %}
 
 {% block content %}
+<div class="container">
+  <div class="workspace-create" id="workspace-create">
+    <button id="revealButton" class="reveal-button">
+      <i class="fa-solid fa-plus"></i>
+      Add Workspace
+    </button>
+  </div>
+  {% for workspace in workspaces %}
+  <div class="workspace">
+      <span><a href="{% url 'task_list' %}">{{ workspace.workspace_label }}</a></span>
+  </div>
+  {% endfor %}
+</div>
+<script>
+  $(document).ready(function(){
+    $('#revealButton').click(function(){
+        $('#workspace-create').load('/workspace_create/', function(status, xhr){
+            $('#create-form').on('submit', function(e){
+                e.preventDefault();
+                let formData = $(this).serialize();
+                $.ajax({
+                    async: true,
+                    type: 'POST',
+                    url: "{% url 'workspace_create' %}",
+                    data: formData,
+                    success: function(data){
+                        if (data.workspace){
+                          element
+                          update(data.workspace);
+                        }
+                    }
+                })
+            })
+            $('#returnButton').click(function() {
+                $('#create-form').hide();
+                $('#revealButton').show();
+            });
+        });
+    });
+});
+</script>
 {% endblock %}
 
-{% block footer %}
+{% comment %} {% block script %}
+<script src = "{% static "js/workspace.js" %}"></script>
+{% endblock %} {% endcomment %}
+
+{% block footer %}  
 {% endblock %}
