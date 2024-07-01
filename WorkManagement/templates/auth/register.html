@@ -7,21 +7,23 @@
 {%endblock%}
 
 {% block content%}
-
-<h2>Registration</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <div class="checkbox">
-        <input type="checkbox" id="RegisterCheck" />
-        <label for="RegisterCheck">
-            I agree to the <a href = "{%url 'agreement'%}">Terms and Conditions</a>
-        </label>
-      </div>
-    <button type='submit' class = "submit-button">Register now</button>
-</form>
-<p>Already have an account?<a href = "{%url 'login'%}"> Login now </a></p>
+<div class="container">
+    <header>Registration</header>
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <div class="checkbox">
+            <input type="checkbox" id="RegisterCheck" />
+            <label for="RegisterCheck">
+                I agree to the <a href = "{%url 'agreement'%}">Terms and Conditions</a>
+            </label>
+        </div>
+        <button type='submit' class = "submit-button">Register now</button>
+    </form>
+    <p>Already have an account?<a href = "{%url 'login'%}"> Login now </a></p>
+</div>
 {% endblock content %}
+
 {% block script %}
-<link rel="stylesheet" href="{% static 'js/register.js' %}">
+<script src="{% static 'js/register.js' %}"></script>
 {%endblock%}
