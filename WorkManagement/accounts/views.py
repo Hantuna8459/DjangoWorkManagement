@@ -4,16 +4,15 @@ from .forms import(
     CustomRegisterForm, 
     CustomLoginForm,
     EmailVerifyForm,
+    ProfileForm,
 )
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
-from django.conf import settings
 from .models import CustomUser
 import pyotp
 import time
-from django.http import HttpResponse, JsonResponse
 from accounts.utils import generate_otp
 
 # Create your views here.
@@ -126,9 +125,9 @@ def email_verify(request):
         context = {'form':form, 'user':user}
         return render (request, template_name, context)
 
-def password_reset(request):
-    template_name = 'auth/password_reset.html'
-    return render(request, template_name)
+# def password_reset(request):
+#     template_name = 'auth/password_reset.html'
+#     return render(request, template_name)
 
 @login_required(login_url='login')
 def logout_view(request):
@@ -136,8 +135,15 @@ def logout_view(request):
     return redirect('login')
 
 @login_required(login_url='login')
-def profile(request, pk):
+def profile_update(request, pk):
     user = get_object_or_404(CustomUser, user_id=pk)
-    template_name = 'profile/profile.html'
-    context = {'user':user}
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Update User successfully!')
+    else:
+        form = ProfileForm()        
+    template_name = 'profile/profile_update.html'
+    context = {'form':form}
     return render(request, template_name, context)

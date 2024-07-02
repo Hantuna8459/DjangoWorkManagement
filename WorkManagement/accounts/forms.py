@@ -4,7 +4,6 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 class CustomLoginForm(AuthenticationForm):
     
-
     def __init__(self, *args, **kwargs):
         super(CustomLoginForm, self).__init__(*args, **kwargs)
         
@@ -21,6 +20,7 @@ class CustomLoginForm(AuthenticationForm):
     )
     
 class CustomRegisterForm(UserCreationForm):
+    
     email = forms.EmailField(
         label='', 
         widget=forms.TextInput(attrs={
@@ -66,10 +66,53 @@ class CustomRegisterForm(UserCreationForm):
         )
         
 class EmailVerifyForm(forms.Form):
-    otp_entered = forms.CharField(
+    
+    otp_entered = forms.IntegerField(
         label='',
         widget=forms.TextInput(attrs={
             'class':'form-control', 
             'placeholder':'Enter OTP here',
-            })
+            }),
     )
+    
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = [
+        'user_image',
+        'username',
+        'first_name',
+        'last_name',
+        'phone_number',
+        ]
+        
+    phone_number = forms.CharField(
+        label='Phone Number',
+        widget=forms.TextInput(attrs={
+            'type': 'range',
+            'min': '0100000001',
+            'max': '0999999999',
+            'step': '1',
+            'value': '0100000001',
+            'class': 'form-range'
+        }),
+        help_text='<p>Your phone number is: <span id="value"></span></p>',
+    )
+        
+    def __init__(self, *args, **kwargs):
+        super(ProfileForm, self).__init__(*args, **kwargs)
+        
+        self.fields['username'].label = ''
+        self.fields['username'].widget.attrs['class'] = 'form-control'
+        self.fields['username'].widget.attrs['placeholder'] = 'Enter your Username'
+        self.fields['username'].help_text = ''
+        
+        self.fields['first_name'].label = ''
+        self.fields['first_name'].widget.attrs['class'] = 'form-control'
+        self.fields['first_name'].widget.attrs['placeholder'] = 'Enter your First Name'
+        self.fields['first_name'].help_text = ''
+        
+        self.fields['last_name'].label = ''
+        self.fields['last_name'].widget.attrs['class'] = 'form-control'
+        self.fields['last_name'].widget.attrs['placeholder'] = 'Enter your Last Name'
+        self.fields['last_name'].help_text = ''

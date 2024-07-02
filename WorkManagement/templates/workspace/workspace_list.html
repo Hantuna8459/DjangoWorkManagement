@@ -20,7 +20,7 @@
         </a>
         <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
           <li>
-            <a class="dropdown-item" href="{% url 'profile' user.user_id %}">
+            <a class="dropdown-item" href="{% url 'profile_update' user.user_id %}">
               <i class="fa-solid fa-address-card"></i>
               Profile
             </a>
@@ -53,21 +53,21 @@
   </div>
   {% for workspace in workspaces %}
   <div class="workspace">
-      <span><a href="{% url 'task_list' %}">{{ workspace.workspace_label }}</a></span>
+      <span><a href="{% url 'task_list' workspace.workspace_id %}">{{ workspace.workspace_label }}</a></span>
   </div>
   {% endfor %}
 </div>
 <script>
   $(document).ready(function(){
     $('#revealButton').click(function(){
-        $('#workspace-create').load('/workspace_create/', function(status, xhr){
+        $('#workspace-create').load('{% url 'workspace_create' %}', function(status, xhr){
             $('#create-form').on('submit', function(e){
                 e.preventDefault();
                 let formData = $(this).serialize();
                 $.ajax({
                     async: true,
                     type: 'POST',
-                    url: "{% url 'workspace_create' %}",
+                    url: '{% url 'workspace_create' %}',
                     data: formData,
                     success: function(data){
                         if (data.workspace){
@@ -91,5 +91,5 @@
 <script src = "{% static "js/workspace.js" %}"></script>
 {% endblock %} {% endcomment %}
 
-{% block footer %}  
+{% block footer %}
 {% endblock %}

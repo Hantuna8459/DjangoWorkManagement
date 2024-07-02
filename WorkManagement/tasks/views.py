@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from tasks.models import Task
+from tasks.models import Task, Workspace
 
 # Create your views here.
 
