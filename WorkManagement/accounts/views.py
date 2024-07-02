@@ -4,9 +4,6 @@ from .forms import(
     CustomRegisterForm, 
     CustomLoginForm,
     EmailVerifyForm,
-    # Experiment
-    EmailForm,
-    OTPForm,
 )
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -17,15 +14,9 @@ from .models import CustomUser
 import pyotp
 import time
 from django.http import HttpResponse, JsonResponse
+from accounts.utils import generate_otp
 
 # Create your views here.
-
-# create OTP
-def generate_otp():
-    base32_secret = pyotp.random_base32()
-    totp = pyotp.TOTP(base32_secret, interval=300)
-    otp = totp.now()
-    return otp, base32_secret
 
 def login_view(request):
     if request.method == 'POST':
@@ -134,74 +125,6 @@ def email_verify(request):
         template_name = 'auth/email_verification.html'
         context = {'form':form, 'user':user}
         return render (request, template_name, context)
-
-# use this for email test
-def send_email_test(request):
-    if request.method == 'POST':
-        form = EmailForm(data=request.POST)
-        if form.is_valid():
-            # send OTP
-            otp, base32_secret = generate_otp()
-            
-            # Store the secret and timestamp in the session
-            request.session['base32_secret'] = base32_secret
-            request.session['otp_timestamp'] = int(time.time())
-
-            # send email
-            subject = "hello buddy"
-            message = render_to_string('experiments/email_template_test.html', {'otp': otp})
-            recipient_email = form.cleaned_data['email']
-            send_mail(subject,
-                      message,
-                      from_email=settings.EMAIL_HOST_USER,
-                      recipient_list = [recipient_email],
-                      fail_silently=False,
-                      )
-            messages.success(request, 'Email send successfully!')
-            return redirect('otp_verify')
-        else:
-            messages.error(request, 'Email send failed!')
-    else:
-        form = EmailForm()
-    context = {'form':form}
-    template_name = 'experiments/send_email_test.html'
-    return render(request, template_name, context)
-
-# test otp verify
-def otp_verification_test(request):
-    if request.method == 'POST':
-        otp_entered = request.POST.get('otp_entered')
-        base32_secret = request.session.get('base32_secret')
-        otp_timestamp = request.session.get('otp_timestamp')
-        current_time = int(time.time())
-        
-        # Calculate OTP validity period
-        if base32_secret and otp_timestamp is not None:
-            otp_validity_period = 300
-            
-            # Check if the OTP has expired
-            if current_time - otp_timestamp > otp_validity_period:
-                messages.error(request, 'OTP has expired. Please request a new one.')
-                return redirect('send_email')
-    
-            # Verify the OTP using TOTP object
-            totp = pyotp.TOTP(base32_secret, interval=otp_validity_period)
-            if totp.verify(otp_entered):
-                messages.success(request, 'OTP verified successfully.')
-                # Clear OTP-related data from session after successful verification
-                del request.session['base32_secret']
-                del request.session['otp_timestamp']
-            else:
-                messages.error(request, 'Invalid OTP. Please try again.')
-                return redirect('send_email')
-        else:
-            messages.error(request, 'OTP verification failed. No OTP or timestamp found in session.')
-            return redirect('send_email')
-    else:
-        form = OTPForm()
-    template_name = 'experiments/otp_verification_test.html'
-    context = {'form':form}
-    return render (request, template_name, context)
 
 def password_reset(request):
     template_name = 'auth/password_reset.html'

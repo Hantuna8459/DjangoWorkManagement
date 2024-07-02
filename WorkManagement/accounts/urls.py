@@ -15,7 +15,4 @@ urlpatterns = [
     path('register/email_verification', views.email_verify, name='email_verification'),
     path('register/email_verification/register_complete', TemplateView.as_view(template_name='auth/register_complete.html'), name = 'register_complete'),
     path('profile/<int:pk>/', views.profile, name='profile'),
-    # experiments
-    path('send_email', views.send_email_test, name='send_email'),
-    path('send_email/otp_verify', views.otp_verification_test, name='otp_verify')
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
