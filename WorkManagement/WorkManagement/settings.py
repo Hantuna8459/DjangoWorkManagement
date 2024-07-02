@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core.apps.CoreConfig',
+    'accounts.apps.AccountsConfig',
+    'workspaces.apps.WorkspacesConfig',
+    'tasks.apps.TasksConfig',
     "crispy_forms",
     "crispy_bootstrap5",
 ]
@@ -152,7 +154,7 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # Add CustomUser model
-AUTH_USER_MODEL = 'core.CustomUser'
+AUTH_USER_MODEL = 'accounts.CustomUser'
 
 # Send Email Setup
 EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND")
