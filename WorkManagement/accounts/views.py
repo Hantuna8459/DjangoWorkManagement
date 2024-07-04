@@ -36,7 +36,7 @@ def login_view(request):
                     return redirect('workspace_list')
     else:
         form = CustomLoginForm() 
-    template_name = 'auth/login.html'
+    template_name = 'accounts/login.html'
     context = {'form':form}
     return render(request, template_name, context)
 
@@ -59,7 +59,7 @@ def register(request):
             
             # send email
             subject = "noreply"
-            message = render_to_string('auth/email_template.html', {
+            message = render_to_string('accounts/email_template.html', {
                 'otp': otp,
                 'user':user,
                 })
@@ -75,7 +75,7 @@ def register(request):
             messages.error(request, 'Email send failed!')
     else:
         form = CustomRegisterForm()
-    template_name = 'auth/register.html'
+    template_name = 'accoutns/register.html'
     context = {'form':form}
     return render (request, template_name, context)
 
@@ -121,13 +121,13 @@ def email_verify(request):
             messages.error(request, 'OTP verification failed. No OTP found in session.')
     else:
         form = EmailVerifyForm()
-        template_name = 'auth/email_verification.html'
+        template_name = 'accounts/email_verification.html'
         context = {'form':form, 'user':user}
         return render (request, template_name, context)
 
-# def password_reset(request):
-#     template_name = 'auth/password_reset.html'
-#     return render(request, template_name)
+def password_reset(request):
+    template_name = 'accounts/password_reset.html'
+    return render(request, template_name)
 
 @login_required(login_url='login')
 def logout_view(request):
