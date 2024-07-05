@@ -161,9 +161,10 @@ def set_password_view(request):
         form = CustomSetPassword(request.POST)
         if form.is_valid():
             form.save()
+            return redirect('login')
     else:
         CustomSetPassword()
-    template = ''
+    template = 'accounts/password_set.html'
     context = {'form':form}
     return render(request, template, context)
 
@@ -172,9 +173,10 @@ def change_password_view(request):
         form = CustomPasswordChangeForm(request.POST)
         if form.is_valid():
             form.save()
+            return redirect('profile_update')
     else:
         CustomPasswordChangeForm()
-    template = ''
+    template = 'accounts/'
     context = {'form':form}
     return render(request, template, context)
 
