@@ -1,6 +1,13 @@
 from django import forms
 from .models import CustomUser
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import (
+    UserCreationForm,
+    AuthenticationForm,
+    PasswordResetForm,
+    SetPasswordForm,
+    PasswordChangeForm,
+    
+)
 
 class CustomLoginForm(AuthenticationForm):
     
@@ -65,6 +72,8 @@ class CustomRegisterForm(UserCreationForm):
             '</span>'	
         )
         
+    field_order = ["email","username","password1","password2"]
+        
 class EmailVerifyForm(forms.Form):
     
     otp_entered = forms.IntegerField(
@@ -74,6 +83,70 @@ class EmailVerifyForm(forms.Form):
             'placeholder':'Enter OTP here',
             }),
     )
+    
+class CustomPasswordReset(PasswordResetForm):
+    
+    def __init__(self, *args, **kwargs):
+        super(CustomPasswordReset, self).__init__(*args, **kwargs)
+        
+        self.fields['email'].label = ''
+        self.fields['email'].widget.attrs['class'] = 'form-control'
+        self.fields['email'].widget.attrs['placeholder'] = 'Enter your Email'
+        self.fields['email'].help_text = (
+            '<span>Please enter your email so we can reset your password</span>'
+        )
+        
+class CustomSetPassword(SetPasswordForm):
+    def __init__(self, *args, **kwargs):
+        super(CustomSetPassword, self).__init__(*args, **kwargs)
+        
+        self.fields['new_password1'].label = ''
+        self.fields['new_password1'].widget.attrs['class'] = 'form-control'
+        self.fields['new_password1'].widget.attrs['placeholder'] = 'Enter your Email'
+        self.fields['new_password1'].help_text = (
+            '<ul class="form-text text-muted small">'
+            '<li>Your password must contain at least 8 characters.</li>'
+            '<li>Your password cannot be entirely numeric.</li>'
+            '</ul>'
+        )
+        self.fields['new_password2'].label = ''
+        self.fields['new_password2'].widget.attrs['class'] = 'form-control'
+        self.fields['new_password2'].widget.attrs['placeholder'] = 'Confirm Password'
+        self.fields['new_password2'].help_text = (
+            '<span class="form-text">'
+            '<p>Enter the same password as before</p>'
+            '</span>'	
+        )
+        
+class CustomPasswordChangeForm(PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super(CustomSetPassword, self).__init__(*args, **kwargs)
+        
+        self.fields['old_password'].label = ''
+        self.fields['old_password'].widget.attrs['class'] = 'form-control'
+        self.fields['old_password'].widget.attrs['placeholder'] = 'Enter your old Password'
+        self.fields['old_password'].help_text = (
+            '<span></span>'
+        )
+        
+        self.fields['new_password1'].label = ''
+        self.fields['new_password1'].widget.attrs['class'] = 'form-control'
+        self.fields['new_password1'].widget.attrs['placeholder'] = 'Enter your Email'
+        self.fields['new_password1'].help_text = (
+            '<ul class="form-text text-muted small">'
+            '<li>Your password must contain at least 8 characters.</li>'
+            '<li>Your password cannot be entirely numeric.</li>'
+            '</ul>'
+        )
+        self.fields['new_password2'].label = ''
+        self.fields['new_password2'].widget.attrs['class'] = 'form-control'
+        self.fields['new_password2'].widget.attrs['placeholder'] = 'Confirm Password'
+        self.fields['new_password2'].help_text = (
+            '<span class="form-text">'
+            '<p>Enter the same password as before</p>'
+            '</span>'	
+        )
+        
     
 class ProfileForm(forms.ModelForm):
     class Meta:
@@ -96,7 +169,7 @@ class ProfileForm(forms.ModelForm):
             'value': '0100000001',
             'class': 'form-range'
         }),
-        help_text='<p>Your phone number is: <span id="value"></span></p>',
+        help_text='<p>Your phone number is: <span id="value"</p>',
     )
         
     def __init__(self, *args, **kwargs):
