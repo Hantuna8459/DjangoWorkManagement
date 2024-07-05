@@ -6,13 +6,14 @@ from workspaces.forms import WorkspaceCreateForm
 
 # Create your views here.
 
-# @login_required(login_url='login')
+@login_required(login_url='login')
 def workspace_list(request):
     workspaces = Workspace.objects.all()
-    template_name = 'workspace/workspace_list.html'
+    template_name = 'workspaces/workspace_list.html'
     context = {'workspaces':workspaces}
     return render (request, template_name, context)
 
+@login_required(login_url='login')
 def workspace_create(request):
     if request.method == "POST":
         form = WorkspaceCreateForm(request.POST)
@@ -24,15 +25,30 @@ def workspace_create(request):
         # 
     else:
         form = WorkspaceCreateForm()
-    template_name = 'workspace/workspace_create.html'
+    template_name = 'workspaces/workspace_create.html'
     context = {'form':form}
     return render(request, template_name, context)
 
+@login_required(login_url='login')
+def workspace_update(request, pk):
+    workspace = get_object_or_404(Workspace, workspace_id=pk)
+    if request.method == 'POST':
+        form = WorkspaceCreateForm(request.POST, instance=workspace)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Workspace title change successfully!')
+    else:
+        form = WorkspaceCreateForm()
+    tempate_name = 'workspaces/workspace_update.html'
+    context = {'form':form}
+    return render(request, tempate_name, context)
+
+@login_required(login_url='login')
 def workspace_delete(request, pk):
     workspaces = get_object_or_404(Workspace, workspace_id=pk)
     if request.method == "POST":
         workspaces.delete()
         return redirect ('workspace_list')
-    template_name = 'workspace/workspace_delete.html'
+    template_name = 'workspaces/workspace_delete.html'
     context = {'workspaces':workspaces}
     return render(request, template_name, context)

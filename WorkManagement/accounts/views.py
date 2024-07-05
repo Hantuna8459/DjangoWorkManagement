@@ -5,6 +5,9 @@ from .forms import(
     CustomLoginForm,
     EmailVerifyForm,
     ProfileForm,
+    CustomSetPassword,
+    CustomPasswordChangeForm,
+    CustomPasswordReset,
 )
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -14,6 +17,7 @@ from .models import CustomUser
 import pyotp
 import time
 from accounts.utils import generate_otp
+from django.contrib.sites.shortcuts import get_current_site
 
 # Create your views here.
 
@@ -24,23 +28,23 @@ def login_view(request):
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']     
             user = authenticate(request, username=username, password=password)
-            login_save = request.POST.get('login_save')# manual set cookie expire age
+            login_save = request.POST.get('login_save')
             if user is not None:
                 if user.is_active == True:
+                    request.session.set_expiry(login_save and 172800 or 0)
                     login(request, user)
-                    if login_save:
-                        request.session.set_expiry(1000000)
-                        return redirect('workspace_list')
-                    else:
-                        request.session.set_expiry(0)
                     return redirect('workspace_list')
+                else:
+                    messages.error(request, 'This account is deactivated, please contact admin')
+            else:
+                messages.error(request, 'User Unavailable')
     else:
         form = CustomLoginForm() 
     template_name = 'accounts/login.html'
     context = {'form':form}
     return render(request, template_name, context)
 
-def register(request):
+def register_view(request):
     if request.method == 'POST':
         form = CustomRegisterForm(request.POST)
         if form.is_valid():
@@ -58,8 +62,8 @@ def register(request):
             request.session['password'] = form.cleaned_data['password1']
             
             # send email
-            subject = "noreply"
-            message = render_to_string('accounts/email_template.html', {
+            subject = "Your Account Registration"
+            message = render_to_string('accounts/register_email.html', {
                 'otp': otp,
                 'user':user,
                 })
@@ -75,11 +79,11 @@ def register(request):
             messages.error(request, 'Email send failed!')
     else:
         form = CustomRegisterForm()
-    template_name = 'accoutns/register.html'
+    template_name = 'accounts/register.html'
     context = {'form':form}
     return render (request, template_name, context)
 
-def email_verify(request):
+def email_verify_view(request):
     user = request.user
     if request.method == 'POST':
         otp_entered = request.POST.get('otp_entered')
@@ -125,17 +129,63 @@ def email_verify(request):
         context = {'form':form, 'user':user}
         return render (request, template_name, context)
 
-def password_reset(request):
+def password_reset_view(request):
+    if request.method == 'POST':
+        form = CustomPasswordReset(request.POST)
+        if form.is_valid():
+            current_site = get_current_site(request)
+            user = request.user
+            
+            # Send Email
+            subject = "Password Reset"
+            message = render_to_string('accounts/password_reset_email.html',{
+                'user':user,
+                'domain': current_site.domain,
+            })
+            recipient_email = form.cleaned_data['email']
+            send_mail(
+                subject,
+                message,
+                from_email=('noreply@mail.com'),
+                recipient_list = [recipient_email],
+                fail_silently=False,
+            )
+    else:
+        form = CustomPasswordReset() 
     template_name = 'accounts/password_reset.html'
-    return render(request, template_name)
+    context = {'form':form}
+    return render(request, template_name, context)
+
+def set_password_view(request):
+    if request.method == 'POST':
+        form = CustomSetPassword(request.POST)
+        if form.is_valid():
+            form.save()
+    else:
+        CustomSetPassword()
+    template = ''
+    context = {'form':form}
+    return render(request, template, context)
+
+def change_password_view(request):
+    if request.method == 'POST':
+        form = CustomPasswordChangeForm(request.POST)
+        if form.is_valid():
+            form.save()
+    else:
+        CustomPasswordChangeForm()
+    template = ''
+    context = {'form':form}
+    return render(request, template, context)
 
 @login_required(login_url='login')
 def logout_view(request):
     logout(request)
+    request.session.flush()
     return redirect('login')
 
 @login_required(login_url='login')
-def profile_update(request, pk):
+def profile_update_view(request, pk):
     user = get_object_or_404(CustomUser, user_id=pk)
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=user)

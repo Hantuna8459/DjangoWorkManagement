@@ -7,12 +7,13 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.login_view, name='login'),
-    path('login/password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
-    path('login/password_reset/password_reset_complete', auth_views.PasswordResetDoneView.as_view() ,name='password_reset_complete'),
-    path('register/', views.register, name='register'),
+    path('password_reset/', views.password_reset_view, name='password_reset'),
+    path('password_reset/password_reset_complete/', auth_views.PasswordResetDoneView.as_view() ,name='password_reset_complete'),
+    path('pasword_change', views.change_password_view, name ='password_change'),
+    path('register/', views.register_view, name='register'),
     path('agreement',TemplateView.as_view(template_name='terms_and_conditions.html'), name='agreement'),
     path('logout/', views.logout_view, name='logout'),
-    path('register/email_verification', views.email_verify, name='email_verification'),
-    path('register/email_verification/register_complete', TemplateView.as_view(template_name='auth/register_complete.html'), name = 'register_complete'),
-    path('profile_update/<uuid:pk>/', views.profile_update, name='profile_update'),
+    path('register/email_verification', views.email_verify_view, name='email_verification'),
+    path('register/email_verification/register_complete', TemplateView.as_view(), name = 'register_complete'),
+    path('profile_update/<uuid:pk>/', views.profile_update_view, name='profile_update'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
