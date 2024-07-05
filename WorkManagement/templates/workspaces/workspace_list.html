@@ -14,11 +14,11 @@
       </a>
 
       <div class="dropdown text-end">
-        <a href="#" class="d-block link-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+        <a href="#" class="d-block link-white text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
           <img src="{{user.user_image.url}}" alt="" width="32" height="32" class="rounded-circle">
           <span>{{user.username}}</span>
         </a>
-        <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
+        <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser">
           <li>
             <a class="dropdown-item" href="{% url 'profile_update' user.user_id %}">
               <i class="fa-solid fa-address-card"></i>
