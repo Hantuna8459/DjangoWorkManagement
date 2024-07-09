@@ -16,7 +16,7 @@ class Task(models.Model):
     task_label = models.CharField(max_length=50)
     task_status = models.CharField(max_length=2, choices=TASK_STATUS_CHOICES, default="TD")
     task_description = models.CharField(max_length=255)
-    task_image = models.ImageField(upload_to='task_images', default=None)
+    task_image = models.ImageField(upload_to='task_images', default=None, blank=True, null=True)
     workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE)
     
     class Meta:

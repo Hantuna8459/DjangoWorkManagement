@@ -97,8 +97,8 @@ class CustomPasswordReset(PasswordResetForm):
         )
         
 class CustomSetPassword(SetPasswordForm):
-    def __init__(self, *args, **kwargs):
-        super(CustomSetPassword, self).__init__(*args, **kwargs)
+    def __init__(self, user, *args, **kwargs):
+        super(CustomSetPassword, self).__init__(user, *args, **kwargs)
         
         self.fields['new_password1'].label = ''
         self.fields['new_password1'].widget.attrs['class'] = 'form-control'
@@ -119,8 +119,8 @@ class CustomSetPassword(SetPasswordForm):
         )
         
 class CustomPasswordChangeForm(PasswordChangeForm):
-    def __init__(self, *args, **kwargs):
-        super(CustomSetPassword, self).__init__(*args, **kwargs)
+    def __init__(self, user, *args, **kwargs):
+        super(CustomPasswordChangeForm, self).__init__(user, *args, **kwargs)
         
         self.fields['old_password'].label = ''
         self.fields['old_password'].widget.attrs['class'] = 'form-control'
@@ -163,10 +163,10 @@ class ProfileForm(forms.ModelForm):
         label='Phone Number',
         widget=forms.TextInput(attrs={
             'type': 'range',
-            'min': '0100000001',
+            'min': '0100000000',
             'max': '0999999999',
             'step': '1',
-            'value': '0100000001',
+            'value': '0100000000',
             'class': 'form-range'
         }),
         help_text='<p>Your phone number is: <span id="value"</p>',

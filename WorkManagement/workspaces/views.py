@@ -8,7 +8,7 @@ from workspaces.forms import WorkspaceCreateForm
 
 @login_required(login_url='login')
 def workspace_list(request):
-    workspaces = Workspace.objects.all()
+    workspaces = Workspace.objects.filter(user = request.user)
     template_name = 'workspaces/workspace_list.html'
     context = {'workspaces':workspaces}
     return render (request, template_name, context)
@@ -21,8 +21,7 @@ def workspace_create(request):
             workspace = form.save(commit=False)
             workspace.user = request.user
             workspace.save()
-            # return JsonResponse(workspace)
-        # 
+            return redirect ('workspace_list')
     else:
         form = WorkspaceCreateForm()
     template_name = 'workspaces/workspace_create.html'
@@ -33,12 +32,12 @@ def workspace_create(request):
 def workspace_update(request, pk):
     workspace = get_object_or_404(Workspace, workspace_id=pk)
     if request.method == 'POST':
-        form = WorkspaceCreateForm(request.POST, instance=workspace)
+        form = WorkspaceCreateForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, 'Workspace title change successfully!')
     else:
-        form = WorkspaceCreateForm()
+        form = WorkspaceCreateForm(instance=workspace)
     tempate_name = 'workspaces/workspace_update.html'
     context = {'form':form}
     return render(request, tempate_name, context)
@@ -48,7 +47,7 @@ def workspace_delete(request, pk):
     workspaces = get_object_or_404(Workspace, workspace_id=pk)
     if request.method == "POST":
         workspaces.delete()
-        return redirect ('workspace_list')
+        return redirect ('workspace_list')  
     template_name = 'workspaces/workspace_delete.html'
     context = {'workspaces':workspaces}
     return render(request, template_name, context)

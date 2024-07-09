@@ -150,6 +150,7 @@ def password_reset_view(request):
                 recipient_list = [recipient_email],
                 fail_silently=False,
             )
+            return redirect('login')
     else:
         form = CustomPasswordReset() 
     template_name = 'accounts/password_reset.html'
@@ -163,7 +164,7 @@ def set_password_view(request):
             form.save()
             return redirect('login')
     else:
-        CustomSetPassword()
+        form = CustomSetPassword(user=request.user)
     template = 'accounts/password_set.html'
     context = {'form':form}
     return render(request, template, context)
@@ -175,7 +176,7 @@ def change_password_view(request):
             form.save()
             return redirect('profile_update')
     else:
-        CustomPasswordChangeForm()
+        form = CustomPasswordChangeForm(user=request.user)
     template = 'accounts/'
     context = {'form':form}
     return render(request, template, context)
@@ -195,7 +196,7 @@ def profile_update_view(request, pk):
             form.save()
             messages.success(request, 'Update User successfully!')
     else:
-        form = ProfileForm()        
-    template_name = 'profile/profile_update.html'
+        form = ProfileForm(instance=user)        
+    template_name = 'profiles/profile_update.html'
     context = {'form':form}
     return render(request, template_name, context)
