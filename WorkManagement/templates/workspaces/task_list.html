@@ -59,19 +59,97 @@
         <td>{{task.task_label}}</td>
         <td>{{task.task_status}}</td>
         <td>
-          <button type="button" class="btn btn-info" a href="{% url 'task_update' task.task_id %}">
+          <button type="button" class="btn btn-info" id="task-button-update" data-bs-toggle="modal" data-bs-target="#task-update-modal">
             <i class="fa-solid fa-eye"></i>
           </button>
-          <button type="button" class="btn btn-danger" a href="{% url 'task_delete' task.task_id %}">
+          <a href="{% url 'task_delete' task.task_id %}" class="btn btn-danger btn-sm">
             <i class="fa-solid fa-trash-can"></i>
-          </button>
+          </a>
         </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
-  <a href="{% url 'task_create' %}" class="btn">Add Task</a>
+  <button type="button" class="btn btn-info" id="task-button-create" data-bs-toggle="modal" data-bs-target="#task-create-modal">
+    Add Task
+  </button>
 </div>
+<div class="modal fade" id="task-create-modal" role="dialog" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="modal-task-create">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <input type="submit" name="addNewOs" value="Save" class="btn btn-primary" form="task-create-form">
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="task-update-modal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id-"modal-task-update">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <input type="submit" name="addNewOs" value="Save" class="btn btn-primary" form="task-update-form">
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+  $(document).ready(function(){
+    $('#task-button-create').click(function(){
+        $('#modal-task-create').load('{% url 'task_create' %}', function(status, xhr){
+            $('#task-create-form').on('submit', function(e){
+                e.preventDefault();
+                let formData = $(this).serialize();
+                $.ajax({
+                    async: true,
+                    type: 'POST',
+                    url: '{% url 'task_create' %}',
+                    data: formData,
+                    success: function(data){
+                        if (data){
+                        }
+                    }
+                })
+            })
+        });
+    });
+});
+
+{% comment %} $(document).ready(function(){
+  $('#task-button-update').click(function(){
+      $('#modal-task-update').load('{% url 'task_update' task.task_id %}', function(status, xhr){
+          $('#task-update-form').on('submit', function(e){
+              e.preventDefault();
+              let formData = $(this).serialize();
+              $.ajax({
+                  async: true,
+                  type: 'POST',
+                  url: '{% url 'task_update' %}',
+                  data: formData,
+                  success: function(data){
+                      if (data){
+                      }
+                  }
+              })
+          })
+      });
+  });
+}); {% endcomment %}
+</script>
 {% endblock %}
 
 {% block footer %}

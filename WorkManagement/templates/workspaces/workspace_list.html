@@ -3,6 +3,7 @@
 
 {% block style %}
 <link rel="stylesheet" href="{% static 'css/workspace.css' %}">
+<link rel="stylesheet" href="{% static 'css/header.css' %}">
 {% endblock %}
 
 {% block header %}
@@ -45,51 +46,48 @@
 
 {% block content %}
 <div class="container">
-  <div class="workspace-create" id="workspace-create">
-    <button id="revealButton" class="reveal-button">
+  <div class="add-workspace">
+    <button id="reveal-button" class="reveal-button" data-bs-toggle="modal" data-bs-target="#workspace-create-modal">
       <i class="fa-solid fa-plus"></i>
       Add Workspace
     </button>
   </div>
   {% for workspace in workspaces %}
   <div class="workspace">
-      <span><a href="{% url 'task_list'%}">{{ workspace.workspace_label }}</a></span>
+      <span><a class="text-decoration-none" href="{% url 'task_list' %}">{{ workspace.workspace_label }}</a></span>
   </div>
   {% endfor %}
 </div>
+<div class="modal fade" id="workspace-create-modal" role="dialog" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="workspace-create">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <input type="submit" value="Save" class="btn btn-primary" form="workspace-create-form">
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
 <script>
-  $(document).ready(function(){
-    $('#revealButton').click(function(){
-        $('#workspace-create').load('{% url 'workspace_create' %}', function(status, xhr){
-            $('#create-form').on('submit', function(e){
-                e.preventDefault();
-                let formData = $(this).serialize();
-                $.ajax({
-                    async: true,
-                    type: 'POST',
-                    url: '{% url 'workspace_create' %}',
-                    data: formData,
-                    success: function(data){
-                        if (data.workspace){
-                          element
-                          update(data.workspace);
-                        }
-                    }
-                })
-            })
-            $('#returnButton').click(function() {
-                $('#create-form').hide();
-                $('#revealButton').show();
-            });
-        });
-    });
+$(document).ready(function(){
+  $('#reveal-button').click(function(){
+      $('#workspace-create').load('{% url 'workspace_create' %}', function(){
+          $('#workspace-create-form').on('submit', function(e){
+              e.preventDefault();
+          })
+      });
+  });
 });
 </script>
 {% endblock %}
-
-{% comment %} {% block script %}
-<script src = "{% static "js/workspace.js" %}"></script>
-{% endblock %} {% endcomment %}
 
 {% block footer %}
 {% endblock %}

@@ -10,7 +10,7 @@
 
 {% block content %}
 <div class = "container">
-    <form class="task-create-form" id="task-create-form">
+    <form class="task-update-form" id="task-update-form">
         {% csrf_token %}
         {{ form|crispy }}
     </form>

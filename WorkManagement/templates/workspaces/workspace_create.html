@@ -1,10 +1,8 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-<form class="create-form" id="create-form" method='post'>
+<form class="workspace-create-form" id="workspace-create-form" method='post'>
     {% csrf_token %}
     {{form|crispy}}
-    <button type="submit" class="submit-button">Add</button>
-    <button type="button" class="btn-close" aria-label="Close"></button>
 </form>
 {% endblock %}

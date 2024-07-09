@@ -11,7 +11,7 @@ body {
     gap: 20px;
     padding: 20px;
 }
-.workspace-create, .workspace {
+.workspace, .add-workspace {
     background: #f0f0f0;
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -23,6 +23,15 @@ body {
     flex-direction: column;
     align-items: center;
 }
+
+.add-workspace:hover{
+    cursor: pointer;
+}
+
+.workspace:hover{
+    cursor: pointer;
+}
+
 .reveal-button {
     width: 100%;
     border: none;
@@ -31,4 +40,9 @@ body {
     cursor: pointer;
     outline: none;
     margin: 0;
+}
+
+.workspace a {
+    color: inherit;
+    display: block;
 }
