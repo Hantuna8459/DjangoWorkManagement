@@ -3,6 +3,8 @@
 {% load static %}
 
 {% block style %}
+<link rel="stylesheet" href="{% static 'css/task_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/header.css' %}">
 {% endblock %}
 
 {% block header %}
@@ -43,10 +45,10 @@
 </header>
 {% endblock %}
 
-{% block content%}
+{% block content %}
 <div class = "wrapper">
-  <table class = "table table-striped table-hover table-bordered">
-    <thead>
+  <table class = "table table-bordered">
+    <thead class = "table-dark">
       <tr>
         <th scope = "col">Task</th>
         <th scope = "col">Status</th>
@@ -57,7 +59,7 @@
       {% for task in tasks %}
       <tr>
         <td>{{task.task_label}}</td>
-        <td>{{task.task_status}}</td>
+        <td>{{task.get_task_status_display}}</td>
         <td>
           <button type="button" class="btn btn-info" id="task-button-update" data-bs-toggle="modal" data-bs-target="#task-update-modal">
             <i class="fa-solid fa-eye"></i>
@@ -84,7 +86,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <input type="submit" name="addNewOs" value="Save" class="btn btn-primary" form="task-create-form">
+        <input type="submit" value="Save" class="btn btn-primary" form="task-create-form">
       </div>
     </div>
   </div>
@@ -99,7 +101,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <input type="submit" name="addNewOs" value="Save" class="btn btn-primary" form="task-update-form">
+        <input type="submit" value="Save" class="btn btn-primary" form="task-update-form">
       </div>
     </div>
   </div>
@@ -107,48 +109,6 @@
 {% endblock %}
 
 {% block script %}
-<script>
-  $(document).ready(function(){
-    $('#task-button-create').click(function(){
-        $('#modal-task-create').load('{% url 'task_create' %}', function(status, xhr){
-            $('#task-create-form').on('submit', function(e){
-                e.preventDefault();
-                let formData = $(this).serialize();
-                $.ajax({
-                    async: true,
-                    type: 'POST',
-                    url: '{% url 'task_create' %}',
-                    data: formData,
-                    success: function(data){
-                        if (data){
-                        }
-                    }
-                })
-            })
-        });
-    });
-});
-
-{% comment %} $(document).ready(function(){
-  $('#task-button-update').click(function(){
-      $('#modal-task-update').load('{% url 'task_update' task.task_id %}', function(status, xhr){
-          $('#task-update-form').on('submit', function(e){
-              e.preventDefault();
-              let formData = $(this).serialize();
-              $.ajax({
-                  async: true,
-                  type: 'POST',
-                  url: '{% url 'task_update' %}',
-                  data: formData,
-                  success: function(data){
-                      if (data){
-                      }
-                  }
-              })
-          })
-      });
-  });
-}); {% endcomment %}
 </script>
 {% endblock %}
 

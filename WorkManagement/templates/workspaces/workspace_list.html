@@ -46,16 +46,14 @@
 
 {% block content %}
 <div class="container">
-  <div class="add-workspace">
-    <button id="reveal-button" class="reveal-button" data-bs-toggle="modal" data-bs-target="#workspace-create-modal">
-      <i class="fa-solid fa-plus"></i>
-      Add Workspace
-    </button>
-  </div>
+  <button id="reveal-button" class="reveal-button" data-bs-toggle="modal" data-bs-target="#workspace-create-modal">
+    <i class="fa-solid fa-plus"></i>
+    Add Workspace
+  </button>
   {% for workspace in workspaces %}
-  <div class="workspace">
-      <span><a class="text-decoration-none" href="{% url 'task_list' %}">{{ workspace.workspace_label }}</a></span>
-  </div>
+  <a href="{% url 'task_list'%}">
+    <span>{{ workspace.workspace_label }}</span>
+  </a>
   {% endfor %}
 </div>
 <div class="modal fade" id="workspace-create-modal" role="dialog" tabindex="-1" aria-hidden="true">
@@ -77,15 +75,7 @@
 
 {% block script %}
 <script>
-$(document).ready(function(){
-  $('#reveal-button').click(function(){
-      $('#workspace-create').load('{% url 'workspace_create' %}', function(){
-          $('#workspace-create-form').on('submit', function(e){
-              e.preventDefault();
-          })
-      });
-  });
-});
+// 
 </script>
 {% endblock %}
 
