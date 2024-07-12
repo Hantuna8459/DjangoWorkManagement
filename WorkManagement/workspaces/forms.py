@@ -13,3 +13,6 @@ class WorkspaceCreateForm(forms.ModelForm):
     class Meta:
         model = Workspace
         fields = ['workspace_label']
+        
+class WorkspaceUpdateForm(WorkspaceCreateForm):
+    pass

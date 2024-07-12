@@ -15,7 +15,7 @@ class Task(models.Model):
     task_id = models.UUIDField(primary_key=True, default=uuid.uuid1, editable=False)
     task_label = models.CharField(max_length=50)
     task_status = models.CharField(max_length=2, choices=TASK_STATUS_CHOICES, default="TD")
-    task_description = models.CharField(max_length=255)
+    task_description = models.CharField(max_length=255, default=None, blank=True, null=True)
     task_image = models.ImageField(upload_to='task_images', default=None, blank=True, null=True)
     workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE)
     

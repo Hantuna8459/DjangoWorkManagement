@@ -20,13 +20,14 @@ class TaskCreateForm(forms.ModelForm):
         'task_image',
         ]
     
-class TaskUpdateForm(TaskCreateForm):
+class TaskUpdateForm(forms.ModelForm):
     task_status = forms.ChoiceField()
     class Meta:
-        field_order = [
+        model = Task
+        fields = [
             'task_label',
             'task_description',
-            'task_status'
+            'task_status',
             'task_image',
         ]
 
