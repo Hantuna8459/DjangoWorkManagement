@@ -6,7 +6,7 @@
     padding: 20px;
 }
 
-.reveal-button {
+.workspace-create-button {
     width: 100%;
     background: #f0f0f0;
     border: 1px solid #ccc;
@@ -20,6 +20,7 @@
 }
 
 .container a {
+    position: relative;
     width: 100%;
     text-decoration: none;
     color: inherit;
@@ -35,10 +36,35 @@
     align-items: center;
 }
 
-.reveal-button:hover{
-    background: #d1d0d0;
+.workspace-create-button:hover{
+    border-color: black;
 }
 
 .container a:hover{
-    background: #d1d0d0;
+    border-color: black;
+}
+
+.reveal-button{
+    display: none;
+    position: absolute;
+    top: 5%;
+    right: 1%;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.container a:hover .reveal-button{
+    display: inline-flex;
+}
+.workspace-edit{
+    position: absolute;
+    top: 1%;
+    right: -17%;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.3s ease;
+}
+#workspace-button-update, #workspace-button-delete{
+    display: none;
 }

@@ -1,24 +1,9 @@
-// now move to templates
-$(document).ready(function(){
-    $('#revealButton').click(function(){
-        $('#workspace-create').load('/workspace_create/', function(status, xhr){
-            $('#create-form').on('submit', function(e){
-                e.preventDefault();
-                let formData = $(this).serialize();
-                $.ajax({
-                    async: true,
-                    type: 'POST',
-                    url: "{% url 'workspace_create' %}",
-                    data: formData,
-                    success: function(data){
-                        
-                    }
-                })
-            })
-            $('#returnButton').click(function() {
-                $('#create-form').hide();
-                $('#revealButton').show();
-            });
-        });
-    });
-});
+// $('#reveal-button').onClick(function(){
+//     $('#workspace-create-button').show();
+//     event.stopPropagation();
+// })
+function toggleButtons(event) {
+    const sideButtons = document.getElementById('workspace-button-update');
+    sideButtons.classList.toggle('show');
+    event.stopPropagation(); // Prevents the event from bubbling up to parent elements
+}

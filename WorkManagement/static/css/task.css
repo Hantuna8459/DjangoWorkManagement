@@ -1,13 +1,12 @@
-.wrapper {
+.container {
     position: absolute;
     top: 30%;
     left: 50%;
     transform: translate(-50%,-50%);
-    max-width: 70%;  
+    max-width: 50%;  
     width: 100%;
     border-radius: 7px;
 }
-
-.table {
-    margin: 0;
+#task-button-create:hover{
+    background-color: #68a3ca;
 }
