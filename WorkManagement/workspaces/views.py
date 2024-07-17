@@ -36,7 +36,9 @@ def workspace_update(request, pk):
     if request.method == 'POST':
         form = WorkspaceUpdateForm(request.POST, instance=workspace)
         if form.is_valid():
-            form.save()
+            workspace = form.save(commit=False)
+            workspace.user = request.user
+            workspace.save()
             messages.success(request, 'Workspace title change successfully!')
     else:
         form = WorkspaceUpdateForm(instance=workspace)
@@ -48,6 +50,7 @@ def workspace_update(request, pk):
 def workspace_delete(request, pk):
     workspaces = get_object_or_404(Workspace, workspace_id=pk)
     if request.method == "POST":
+        workspaces.user = request.user
         workspaces.delete()
         return redirect ('workspace_list')  
     template_name = 'workspaces/workspace_delete.html'

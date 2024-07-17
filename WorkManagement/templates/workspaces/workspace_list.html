@@ -51,7 +51,7 @@
     Add Workspace
   </button>
   {% for workspace in workspaces %}
-  <a href="{% url 'task_list'%}">
+  <a href="{% url 'task_list' workspace.workspace_id%}">
     <button type="button" class="reveal-button rounded-circle" id="reveal-button" onclick="toggleButtons(event)">
       <i class="fa-solid fa-ellipsis"></i>
     </button>

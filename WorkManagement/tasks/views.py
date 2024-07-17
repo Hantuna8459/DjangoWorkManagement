@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-from .models import Task, Workspace
+from .models import Task
 from tasks.forms import (
     TaskCreateForm,
     TaskUpdateForm,
@@ -10,11 +11,10 @@ from django.contrib import messages
 # Create your views here.
 
 @login_required(login_url='login')
-def task_list(request):
-    workspaces = Workspace.objects.filter(user = request.user)
-    tasks = Task.objects.filter(workspace_id__in=workspaces)
+def task_list(request, pk):
+    tasks = Task.objects.filter(workspace_id=pk)
     template_name = 'workspaces/task_list.html'
-    context = {'tasks':tasks, 'workspaces':workspaces}
+    context = {'tasks':tasks}
     return render (request, template_name, context)
 
 @login_required(login_url='login')
@@ -24,7 +24,6 @@ def task_create(request):
         if form.is_valid():
             task = form.save(commit=False)
             task.save()
-            return redirect('task_list')
     else:
         form = TaskCreateForm()
     template = 'workspaces/task_create.html'
@@ -50,7 +49,4 @@ def task_delete(request, pk):
     tasks = get_object_or_404(Task, task_id=pk)
     if request.method == "POST":
         tasks.delete()
-        return redirect ('task_list')
-    template_name = 'workspaces/task_delete.html'
-    context = {'tasks':tasks}
-    return render(request, template_name, context)
+    return HttpResponse('task deleted!')
