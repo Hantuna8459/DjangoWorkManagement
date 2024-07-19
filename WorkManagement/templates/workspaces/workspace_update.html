@@ -1,8 +1,0 @@
-{% extends "base.html" %}
-{% load crispy_forms_tags %}
-{% block content %}
-<form class="workspace-update-form" id="workspace-update-form" method='post'>
-    {% csrf_token %}
-    {{form|crispy}}
-</form>
-{% endblock %}
