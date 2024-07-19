@@ -197,6 +197,6 @@ def profile_update_view(request, pk):
             messages.success(request, 'Update User successfully!')
     else:
         form = ProfileForm(instance=user)        
-    template_name = 'profiles/profile_update.html'
+    template_name = 'accounts/profile_update.html'
     context = {'form':form}
     return render(request, template_name, context)

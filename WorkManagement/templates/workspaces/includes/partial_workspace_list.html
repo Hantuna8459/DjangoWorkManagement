@@ -1,0 +1,20 @@
+<button type="button" id="workspace-create-button" class="btn workspace-create-button" data-url="{% url "workspace_create" %}">
+  <i class="fa-solid fa-plus"></i>
+  Add Workspace
+</button>
+{% for workspace in workspaces %}
+<a href="{% url 'task_list' workspace.workspace_id %}">
+  <button type="button" class="reveal-button rounded-circle" id="workspace-edit">
+    <i class="fa-solid fa-ellipsis"></i>
+  </button>
+  <div class="workspace-edit" id="workspace-edit">
+    <button type="button" class="btn btn-info btn-sm workspace-delete-button" id="workspace-update-button" data-bs-toggle="modal" data-bs-target="#workspace-update-modal">
+      update
+    </button>
+    <button type="button" class="btn btn-danger btn-sm workspace-delete-button " id="workspace-delete-button" data-bs-toggle="modal" data-bs-target="#workspace-delete-modal">
+      delete
+    </button>
+  </div>
+  <span class="workspace-label">{{ workspace.workspace_label }}</span>
+</a>
+{% endfor %}

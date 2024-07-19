@@ -7,108 +7,16 @@
 {% endblock %}
 
 {% block header %}
-<header class="p-3 bg-dark text-white">
-  <div class="container-fluid">
-    <div class="d-flex flex-wrap align-items-center justify-content-between">
-      <a href="{% url 'workspace_list' %}" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-        Work Management
-      </a>
-
-      <div class="dropdown text-end">
-        <a href="#" class="d-block link-white text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
-          <img src="{{user.user_image.url}}" alt="" width="32" height="32" class="rounded-circle">
-          <span>{{user.username}}</span>
-        </a>
-        <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser">
-          <li>
-            <a class="dropdown-item" href="{% url 'profile_update' user.user_id %}">
-              <i class="fa-solid fa-address-card"></i>
-              Profile
-            </a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="#">
-              <i class="fa-solid fa-gear"></i>
-              Settings
-            </a>
-          </li>
-          <li><hr class="dropdown-divider"></li>
-          <li>
-            <a class="dropdown-item" href="{% url 'logout' %}">
-              <i class="fa-solid fa-right-from-bracket"></i>
-              Log Out
-            </a>
-          </li>
-    </div>
-  </div>
-</header>
-{% endblock %}
+{% include "header.html" %}
+{% endblock header %}
 
 {% block content %}
-<div class="container">
-  <button id="workspace-create-button" class="workspace-create-button" data-bs-toggle="modal" data-bs-target="#workspace-create-modal">
-    <i class="fa-solid fa-plus"></i>
-    Add Workspace
-  </button>
-  {% for workspace in workspaces %}
-  <a href="{% url 'task_list' workspace.workspace_id%}">
-    <button type="button" class="reveal-button rounded-circle" id="reveal-button" onclick="toggleButtons(event)">
-      <i class="fa-solid fa-ellipsis"></i>
-    </button>
-    <div class="workspace-edit">
-      <button type="button" class="btn btn-info btn-sm" id="workspace-button-update" data-bs-toggle="modal" data-bs-target="#workspace-update-modal">
-        update
-      </button>
-      <button type="button" class="btn btn-danger btn-sm" id="workspace-button-delete" data-bs-toggle="modal" data-bs-target="#workspace-delete-modal">
-        delete
-      </button>
-    </div>
-    <span>{{ workspace.workspace_label }}</span>
-  </a>
-  {% endfor %}
+<div class="container" id="workspace-list">
+  {% include "workspaces/includes/partial_workspace_list.html" %}
 </div>
-<div class="modal fade" id="workspace-create-modal" role="dialog" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="workspace-modal" role="dialog" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body" id="workspace-create">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <input type="submit" value="Save" class="btn btn-primary" form="workspace-create-form">
-      </div>
-    </div>
-  </div>
-</div>
-<div class="modal fade" id="workspace-update-modal" role="dialog" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body" id="workspace-update">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <input type="submit" value="Save" class="btn btn-primary" form="workspace-update-form">
-      </div>
-    </div>
-  </div>
-</div>
-<div class="modal fade" id="workspace-delete-modal" role="dialog" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body" id="workspace-delete">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <input type="submit" value="Save" class="btn btn-primary" form="workspace-update-form">
-      </div>
     </div>
   </div>
 </div>
@@ -116,9 +24,6 @@
 
 {% block script %}
 <script src="{% static 'js/workspace.js' %}"></script>
-<script>
-// 
-</script>
 {% endblock %}
 
 {% block footer %}

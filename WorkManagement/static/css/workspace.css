@@ -6,10 +6,10 @@
     padding: 20px;
 }
 
-.workspace-create-button {
+#workspace-create-button {
     width: 100%;
     background: #f0f0f0;
-    border: 1px solid #ccc;
+    border: 2px solid #d3d3d3;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 5px;
@@ -26,7 +26,7 @@
     color: inherit;
     display: block;
     background: #f0f0f0;
-    border: 1px solid #ccc;
+    border: 2px solid #d3d3d3;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 5px;
@@ -36,12 +36,26 @@
     align-items: center;
 }
 
-.workspace-create-button:hover{
-    border-color: black;
+.workspace-label {
+    display: inline-block;
+    max-width: 360px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: pre;
+}
+
+.workspace-label:hover {
+    white-space: normal;
+    position: absolute;
+}
+
+
+#workspace-create-button:hover{
+    border-color: #adb5bd;
 }
 
 .container a:hover{
-    border-color: black;
+    border-color: #adb5bd;
 }
 
 .reveal-button{
@@ -59,12 +73,14 @@
 }
 .workspace-edit{
     position: absolute;
-    top: 1%;
-    right: -17%;
-    display: flex;
+    z-index: 10;
+    top: 0px;
+    right: -15%;
+    display: inline-block;
     flex-direction: column;
-    transition: right 0.3s ease;
-}
-#workspace-button-update, #workspace-button-delete{
     display: none;
+}
+
+.workspace-update-button, .workspace-delete-button{
+    display: flex;
 }

@@ -13,7 +13,7 @@ from django.contrib import messages
 @login_required(login_url='login')
 def task_list(request, pk):
     tasks = Task.objects.filter(workspace_id=pk)
-    template_name = 'workspaces/task_list.html'
+    template_name = 'tasks/task_list.html'
     context = {'tasks':tasks}
     return render (request, template_name, context)
 
@@ -26,7 +26,7 @@ def task_create(request):
             task.save()
     else:
         form = TaskCreateForm()
-    template = 'workspaces/task_create.html'
+    template = 'tasks/task_create.html'
     context = {'form':form}
     return render(request, template, context)
 
@@ -40,7 +40,7 @@ def task_update(request, pk):
             messages.success(request, 'Update Task successfully!')
     else:
         form = TaskUpdateForm(instance=task)
-    tempate_name = 'workspaces/task_update.html'
+    tempate_name = 'tasks/task_update.html'
     context = {'form':form}
     return render(request, tempate_name, context)
 

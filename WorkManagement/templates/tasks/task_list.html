@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/task.css' %}">
+<link rel="stylesheet" href="{% static 'css/header.css' %}">
+{% endblock %}
+
+{% block header %}
+{% include "header.html" %}
+{% endblock %}
+
+{% block content %}
+<div class = "container mt-5">
+  <table class = "table table-bordered">
+    <thead class = "table-dark">
+      <tr>
+        <th class = "col-8 text-center">Task</th>
+        <th class = "col-2 text-center">Status</th>
+        <th class = "col-2 text-center">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for task in tasks %}
+      <tr class="      
+        {% if task.task_status == 'TD' %} table-danger
+        {% elif task.task_status == 'DG' %} table-warning
+        {% elif task.task_status == 'DN' %} table-success
+        {% endif %}
+      ">
+        <td>{{task.task_label}}</td>
+        <td>{{task.get_task_status_display}}</td>
+        <td class="text-center">
+          <button type="button" class="btn btn-info btn-sm" id="task-button-update" data-bs-toggle="modal" data-bs-target="#task-update-modal">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+          <button type="button" class="btn btn-danger btn-sm" id="task-button-delete" data-bs-toggle="modal" data-bs-target="#task-delete-modal">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="3" class="text-center bg-warning">No Task</td>
+      </tr>
+      {% endfor %}
+      <tr>
+        <td colspan="3" class="table-info">
+            <button class="btn w-100" id="task-button-create" data-bs-toggle="modal" data-bs-target="#task-create-modal">
+              <i class="fa-solid fa-plus"></i>
+              Add Task
+            </button>
+        </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<div class="modal fade" id="task-create-modal" role="dialog" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="modal-task-create">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <input type="submit" value="Save" class="btn btn-primary" form="task-create-form">
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="task-update-modal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id-"modal-task-update">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <input type="submit" value="Save" class="btn btn-primary" form="task-update-form">
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="task-delete-modal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id-"modal-task-delete">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <input type="submit" value="Save" class="btn btn-primary">
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
