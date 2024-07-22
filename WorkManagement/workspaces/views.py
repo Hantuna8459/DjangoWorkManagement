@@ -50,16 +50,16 @@ def workspace_create(request):
     
 @login_required(login_url='login')
 def workspace_update(request, pk):
-    workspaces = Workspace.objects.filter(user=request.user, workspace_id=pk)
+    workspace = get_object_or_404(Workspace, workspace_id=pk)
     if request.method == 'POST':
-        form = WorkspaceUpdateForm(request.POST, instance=workspaces)
+        form = WorkspaceUpdateForm(request.POST, instance=workspace)
     else:
-        form = WorkspaceUpdateForm(instance=workspaces)
-    return save_workspace_form(request, form, 'workspaces/includes/partail_workspace_update.html')
+        form = WorkspaceUpdateForm(instance=workspace)
+    return save_workspace_form(request, form, 'workspaces/includes/partial_workspace_update.html')
 
 @login_required(login_url='login')
 def workspace_delete(request, pk):
-    workspaces = Workspace.objects.filter(user=request.user, workspace_id=pk)
+    workspaces = Workspace.objects.filter(workspace_id=pk)
     data = dict()
     if request.method == "POST":
         workspaces.user = request.user
@@ -72,7 +72,7 @@ def workspace_delete(request, pk):
     else:
         context = {'workspaces':workspaces}
         data['html_form'] = render_to_string(
-            'workspaces/includes/partial_delete_confirm.html',
+            'workspaces/includes/partial_workspace_delete_confirm.html',
             context,
             request=request,
         )

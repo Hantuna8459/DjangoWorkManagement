@@ -1,0 +1,31 @@
+{% for task in tasks %}
+<tr class="      
+  {% if task.task_status == 'TD' %} table-danger
+  {% elif task.task_status == 'DG' %} table-warning
+  {% elif task.task_status == 'DN' %} table-success
+  {% endif %}
+">
+  <td>{{task.task_label}}</td>
+  <td>{{task.get_task_status_display}}</td>
+  <td class="text-center">
+    <button type="button" class="btn btn-info btn-sm" id="task-update-button" data-url="{% url "task_update" task.task_id %}" data-bs-toggle="modal" data-bs-target="#task-modal">
+      <i class="fa-solid fa-eye"></i>
+    </button>
+    <button type="button" class="btn btn-danger btn-sm" id="task-delete-button" data-url="{% url "task_delete" task.task_id %}" data-bs-toggle="modal" data-bs-target="#task-modal">
+      <i class="fa-solid fa-trash-can"></i>
+    </button>
+  </td>
+</tr>
+{% empty %}
+<tr>
+  <td colspan="3" class="text-center bg-warning">No Task</td>
+</tr>
+{% endfor %}
+<tr>
+    <td colspan="3" class="table-info">
+        <button class="btn w-100" id="task-create-button" data-url="{% url "task_create" %}" data-bs-toggle="modal" data-bs-target="#task-modal">
+          <i class="fa-solid fa-plus"></i>
+          Add Task
+        </button>
+    </td>
+</tr>

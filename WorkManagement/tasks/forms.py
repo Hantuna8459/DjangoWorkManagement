@@ -30,5 +30,8 @@ class TaskUpdateForm(forms.ModelForm):
             'task_status',
             'task_image',
         ]
+        def __init__(self, *args, **kwargs):
+            super(TaskUpdateForm, self).__init__(*args, **kwargs)
+            self.fields['task_status'].choices = Task.TASK_STATUS_CHOICES
 
         

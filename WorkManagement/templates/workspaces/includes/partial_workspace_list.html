@@ -8,10 +8,10 @@
     <i class="fa-solid fa-ellipsis"></i>
   </button>
   <div class="workspace-edit" id="workspace-edit">
-    <button type="button" class="btn btn-info btn-sm workspace-delete-button" id="workspace-update-button" data-bs-toggle="modal" data-bs-target="#workspace-update-modal">
+    <button type="button" class="btn btn-info btn-sm workspace-delete-button"  id="workspace-update-button" data-url="{% url "workspace_update" workspace.workspace_id %}" data-bs-toggle="modal" data-bs-target="#workspace-update-modal">
       update
     </button>
-    <button type="button" class="btn btn-danger btn-sm workspace-delete-button " id="workspace-delete-button" data-bs-toggle="modal" data-bs-target="#workspace-delete-modal">
+    <button type="button" class="btn btn-danger btn-sm workspace-delete-button " id="workspace-delete-button" data-url="{% url "workspace_delete" workspace.workspace_id%}" data-bs-toggle="modal" data-bs-target="#workspace-delete-modal">
       delete
     </button>
   </div>
