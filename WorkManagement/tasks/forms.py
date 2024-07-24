@@ -5,7 +5,6 @@ from django_ckeditor_5.widgets import CKEditor5Widget
 # Create your form here
 
 class TaskCreateForm(forms.ModelForm):
-    task_description = forms.CharField(widget="")
     class Meta:
         model = Task
         fields = [
@@ -21,7 +20,6 @@ class TaskCreateForm(forms.ModelForm):
         ]
     
 class TaskUpdateForm(forms.ModelForm):
-    task_status = forms.ChoiceField()
     class Meta:
         model = Task
         fields = [
