@@ -50,7 +50,7 @@ $(function(){
     $("#workspace-modal").on("submit", ".workspace-update-form", saveForm);
 
     //Delete Workspace
-    $("#workspace-delete-button").click(loadForm);
+    $("#workspace-edit").on("click","#workspace-update-button",loadForm);
     $("#workspace-modal").on("submit", ".workspace-delete-form", saveForm);
 });
 

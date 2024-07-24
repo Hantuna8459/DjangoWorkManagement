@@ -9,14 +9,14 @@
 {% endblock %}
 
 {% block content %}
-<form class="workspace-delete-form" id="workspace-delete-form" data-url="{% url "workspace_delete" workspace.workspace_id %}" method='post'>
+<form class="workspace-delete-form" id="workspace-delete-form" action="{% url "workspace_delete" workspace.workspace_id %}" method='post'>
     {% csrf_token %}
     <div class="modal-header">
         <h4 class="modal-title">Change Workspace name</h4>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p class="lead">Are you sure you want to delete the book <strong>{{ workspace.workspace_label }}</strong>?</p>
+        <p class="lead">Are you sure you want to delete <strong>{{ workspace.workspace_label }}</strong>?</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>

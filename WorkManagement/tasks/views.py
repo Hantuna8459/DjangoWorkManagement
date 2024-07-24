@@ -40,11 +40,28 @@ def save_task_form(request, form, template_name):
 
 @login_required(login_url='login')
 def task_create(request):
+    data = dict()
     if request.method == 'POST':
         form = TaskCreateForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save(commit=False)
+            
+            data['form_is_valid'] = True
+            tasks = Task.objects.filter(workspace_id=form.instance.workspace_id)
+            data['html_task_list'] = render_to_string('tasks/includes/partial_task_list.html',
+                {'tasks':tasks}
+            )
+        else:
+            data['form_is_valid'] = False
     else:
         form = TaskCreateForm()
-    return save_task_form(request, form, 'tasks/includes/partial_task_create.html')
+    context = {'form':form}
+    data['html_form'] = render_to_string(
+        'tasks/includes/partial_task_create.html',
+        context,
+        request=request,
+    )
+    return JsonResponse(data)
 
 @login_required(login_url='login')
 def task_update(request, pk):
@@ -63,14 +80,14 @@ def task_delete(request, pk):
         task.delete()
         data['form_is_valid'] = True
         tasks = Task.objects.filter(workspace_id=pk)
-        data['html_task_list'] = render_to_string('workspaces/includes/partial_workspace_list.html',
+        data['html_task_list'] = render_to_string('tasks/includes/partial_task_list.html',
                 {'tasks':tasks}
             )
     else:
         context = {'task':task}
-    data['html_form'] = render_to_string(
-        'workspaces/includes/partial_task_delete_confirm.html',
-        context,
-        request=request,
-    )
+        data['html_form'] = render_to_string(
+            'tasks/includes/partial_task_delete_confirm.html',
+            context,
+            request=request,
+            )
     return JsonResponse(data)

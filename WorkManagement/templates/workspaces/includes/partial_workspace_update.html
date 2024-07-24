@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block content %}
-<form class="workspace-update-form" id="workspace-update-form" data-url="{% url "workspace_update" form.instance.pk %}" method='post'>
+<form class="workspace-update-form" id="workspace-update-form" action="{% url "workspace_update" form.instance.pk %}" method='post'>
     {% csrf_token %}
     <div class="modal-header">
         <h4 class="modal-title">Change Workspace name</h4>

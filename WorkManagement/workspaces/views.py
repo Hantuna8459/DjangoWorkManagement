@@ -59,18 +59,17 @@ def workspace_update(request, pk):
 
 @login_required(login_url='login')
 def workspace_delete(request, pk):
-    workspaces = Workspace.objects.filter(workspace_id=pk)
+    workspace = get_object_or_404(Workspace, workspace_id=pk)
     data = dict()
     if request.method == "POST":
-        workspaces.user = request.user
-        workspaces.delete()
+        workspace.delete()
         data['form_is_valid'] = True
         workspaces = Workspace.objects.filter(user=request.user)
         data['html_workspace_list'] = render_to_string('workspaces/partial_workspace_list.html',
             {'workspaces':workspaces}
         )
     else:
-        context = {'workspaces':workspaces}
+        context = {'workspace':workspace}
         data['html_form'] = render_to_string(
             'workspaces/includes/partial_workspace_delete_confirm.html',
             context,
