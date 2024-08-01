@@ -58,7 +58,15 @@
     border-color: #adb5bd;
 }
 
-.reveal-button{
+.workspace-edit::after { 
+    content: none;
+}
+
+.container a:hover .workspace-edit{
+    display: inline-flex;
+}
+
+.workspace-edit{
     display: none;
     position: absolute;
     top: 5%;
@@ -66,21 +74,4 @@
     padding: 10px;
     border: none;
     cursor: pointer;
-}
-
-.container a:hover .reveal-button{
-    display: inline-flex;
-}
-.workspace-edit{
-    position: absolute;
-    z-index: 10;
-    top: 0px;
-    right: -15%;
-    display: inline-block;
-    flex-direction: column;
-    display: none;
-}
-
-.workspace-update-button, .workspace-delete-button{
-    display: flex;
 }

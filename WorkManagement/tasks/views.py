@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
-from .models import Task
+from .models import Task, Workspace
 from tasks.forms import (
     TaskCreateForm,
     TaskUpdateForm,
@@ -44,10 +44,11 @@ def task_create(request):
     if request.method == 'POST':
         form = TaskCreateForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save(commit=False)
-            
+            task = form.save(commit=False)
+            # need workspace_id here
+            task.save()
             data['form_is_valid'] = True
-            tasks = Task.objects.filter(workspace_id=form.instance.workspace_id)
+            tasks = Task.objects.all()
             data['html_task_list'] = render_to_string('tasks/includes/partial_task_list.html',
                 {'tasks':tasks}
             )

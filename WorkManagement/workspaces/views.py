@@ -22,9 +22,9 @@ def save_workspace_form(request, form, template_name):
     data = dict()
     if request.method == 'POST':
         if form.is_valid():
-            workspaces = form.save(commit=False)
-            workspaces.user = request.user
-            workspaces.save()
+            workspace = form.save(commit=False)
+            workspace.user = request.user
+            workspace.save()
             data['form_is_valid'] = True
             workspaces = Workspace.objects.filter(user=request.user)
             data['html_workspace_list'] = render_to_string('workspaces/includes/partial_workspace_list.html',

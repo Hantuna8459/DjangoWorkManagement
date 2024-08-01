@@ -1,8 +1,6 @@
 $(function(){
     // Get form function
     var loadForm = function(e){
-        e.preventDefault();
-        e.stopPropagation();
         let btn = $(this);
         $.ajax({
             url: btn.attr("data-url"),
@@ -46,7 +44,7 @@ $(function(){
     $("#workspace-modal").on("submit", ".workspace-create-form", saveForm);
 
     //Update Workspace
-    $("#workspace-update-button").click(loadForm);
+    $("#workspace-edit").on("click","#workspace-update-button",loadForm);
     $("#workspace-modal").on("submit", ".workspace-update-form", saveForm);
 
     //Delete Workspace
@@ -55,16 +53,16 @@ $(function(){
 });
 
 // Click on button to show update and delete
-$(document).on('click',".reveal-button", function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    $(this).siblings('.workspace-edit').toggle();
-});
+// $(document).on('click',".reveal-button", function(e) {
+//     e.preventDefault();
+//     e.stopPropagation();
+//     $(this).siblings('.workspace-edit').toggle();
+// });
 
 // Closing button anywhere
-$(document).on('click', function(e) {
-    if (!$(e.target).closest('.workspace-edit').length && !$(e.target).is('.reveal-button')) {
-        $('.workspace-edit').hide();
-    }
-});
+// $(document).on('click', function(e) {
+//     if (!$(e.target).closest('.workspace-edit').length && !$(e.target).is('.reveal-button')) {
+//         $('.workspace-edit').hide();
+//     }
+// });
 
